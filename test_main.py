@@ -1,9 +1,6 @@
 import pytest
-from mylib.lib import (
-    initiate_spark_session,
-    read_dataset,
-    describe
-)
+from mylib.lib import initiate_spark_session, read_dataset, describe
+
 
 @pytest.fixture(scope="session")
 def spark_session():
