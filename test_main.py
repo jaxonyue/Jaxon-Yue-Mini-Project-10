@@ -30,3 +30,9 @@ def test_handle_missing_values(spark_session: SparkSession):
     df = read_dataset(spark_session, data_file_path)
     description_data = handle_missing_values(df)
     assert description_data is not None
+
+if __name__ == "__main__":
+    session = spark_session()
+    test_data_loading(session)
+    test_data_describe(session)
+    test_handle_missing_values(session)
