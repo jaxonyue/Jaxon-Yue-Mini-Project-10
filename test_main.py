@@ -12,7 +12,7 @@ def spark_session():
 
 @pytest.fixture(scope="module")
 def sample_data_path():
-    return "data/Development of Average Annual Wages_1.csv"
+    return "dataset/Development of Average Annual Wages_1.csv"
 
 
 def test_initiate_spark_session():

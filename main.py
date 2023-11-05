@@ -11,7 +11,7 @@ def run_data_analysis():
     spark = initiate_spark_session("Country Wages Analysis")
 
     # Update data file path to the correct location
-    data_file_path = "data/Development of Average Annual Wages_1.csv"
+    data_file_path = "dataset/Development of Average Annual Wages_1.csv"
     country_data = read_dataset(spark, data_file_path)
     country_data.createOrReplaceTempView("country_data_view")
     country_data = handle_missing_values(country_data)
