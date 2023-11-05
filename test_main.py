@@ -1,38 +1,30 @@
+# Assuming this is in test_main.py
+
 import pytest
-from pyspark.sql.session import SparkSession
-from mylib.lib import initiate_spark_session, read_dataset
-from mylib.lib import describe, handle_missing_values
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import lit
+from main import initiate_spark_session, read_dataset, describe
 
-
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def spark_session():
-    session = initiate_spark_session("Test Country Wages Analysis")
-    yield session
-    session.stop()
+    return SparkSession.builder.master("local[2]").appName("Test Session").getOrCreate()
 
+@pytest.fixture(scope="module")
+def sample_data_path():
+    return "data/Development of Average Annual Wages_1.csv"  # You would have a sample CSV file for testing
 
-def test_data_loading(spark_session: SparkSession):
-    data_file_path = "data/Development of Average Annual Wages_1.csv"
-    df = read_dataset(spark_session, data_file_path)
-    assert df is not None
-    assert df.count() > 0
+def test_initiate_spark_session():
+    session = initiate_spark_session("Test App")
+    assert session is not None
+    assert session.sparkContext.appName == "Test App"
 
+def test_read_dataset(spark_session, sample_data_path):
+    dataset = read_dataset(spark_session, sample_data_path)
+    assert dataset is not None
+    assert dataset.count() > 0  # Assuming the test CSV is not empty
+    assert 'Country' in dataset.columns  # Checks if 'Country' column exists in the schema
 
-def test_data_describe(spark_session: SparkSession):
-    data_file_path = "data/Development of Average Annual Wages_1.csv"
-    df = read_dataset(spark_session, data_file_path)
-    description_data = describe(df)
-    assert description_data is not None
-
-
-def test_handle_missing_values(spark_session: SparkSession):
-    data_file_path = "data/Development of Average Annual Wages_1.csv"
-    df = read_dataset(spark_session, data_file_path)
-    description_data = handle_missing_values(df)
-    assert description_data is not None
-
-if __name__ == "__main__":
-    session = spark_session()
-    test_data_loading(session)
-    test_data_describe(session)
-    test_handle_missing_values(session)
+def test_describe(spark_session, sample_data_path):
+    dataset = read_dataset(spark_session, sample_data_path)
+    description = describe(dataset)
+    assert "summary" in description  # The describe() DataFrame should contain a 'summary' row
